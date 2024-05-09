@@ -9,9 +9,9 @@ export const signInWithSpotify = async () => {
   if (!code) {
     redirectToAuthCodeFlow(CLIENT_ID);
   } else {
-    const tkn = await getAccessToken(code);
-    if (!tkn) return;
-    const profile = fetchProfile(tkn.access_token);
+    const { access_token } = await getAccessToken(code);
+    if (!access_token) return;
+    const profile = fetchProfile(access_token);
   }
 };
 
@@ -25,7 +25,10 @@ export async function redirectToAuthCodeFlow(clientId: string) {
   params.append("client_id", clientId);
   params.append("response_type", "code");
   params.append("redirect_uri", REDIRECT_URI);
-  params.append("scope", "user-read-private user-read-email playlist-read-private playlist-modify-private playlist-modify-public");
+  params.append(
+    "scope",
+    "user-read-private user-read-email playlist-read-private playlist-modify-private playlist-modify-public"
+  );
   params.append("code_challenge_method", "S256");
   params.append("code_challenge", challenge);
 
@@ -53,7 +56,7 @@ async function generateCodeChallenge(codeVerifier: string) {
 }
 
 export async function getAccessToken(code: string) {
-  if (!CLIENT_ID) return null;
+  if (!CLIENT_ID) return { access_token: null, expires_in: -1 };
   const verifier = localStorage.getItem("verifier");
 
   const params = new URLSearchParams();
@@ -69,8 +72,12 @@ export async function getAccessToken(code: string) {
     body: params,
   });
 
-  const { access_token, token_type, expires_in, refresh_token, scope } = await result.json();
-  return { access_token, expires_in } as { access_token: string; expires_in: number };
+  const { access_token, token_type, expires_in, refresh_token, scope } =
+    await result.json();
+  return { access_token, expires_in } as {
+    access_token: string;
+    expires_in: number;
+  };
 }
 
 export async function fetchProfile(token: string): Promise<UserProfile> {
@@ -82,7 +89,10 @@ export async function fetchProfile(token: string): Promise<UserProfile> {
   return await result.json();
 }
 
-export async function fetchUsersPlaylists(uid: string, token: string): Promise<any> {
+export async function fetchUsersPlaylists(
+  uid: string,
+  token: string
+): Promise<any> {
   // console.info("fetching playlists")
   // await fetch(`https://api.spotify.com/v1/me/shows?offset=0&limit=20`, {
   //   method: "GET",
@@ -104,5 +114,5 @@ export async function fetchUsersPlaylists(uid: string, token: string): Promise<a
   return await fetch(`https://api.spotify.com/v1/me/playlists`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
-  })
+  });
 }
