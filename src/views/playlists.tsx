@@ -48,8 +48,8 @@ export function PlaylistsPage() {
 
   return profile ? (
     <>
-      <div className="absolute z-0 bg-spotify-500 w-96 aspect-square rounded-full -top-48 -left-36" />
-      <main className="absolute px-6 py-12 z-20 backdrop-blur-3xl bg-spotify-900/70">
+      <div className="absolute blur-3xl z-0 bg-spotify-500 w-96 aspect-square rounded-full -top-48 -left-36" />
+      <main className="absolute px-6 py-12 z-20 bg-spotify-900/70">
         <div className="flex flex-col sm:flex-row items-start justify-between">
           <div className="flex flex-row gap-6 items-center overflow-y-scroll">
             <div
