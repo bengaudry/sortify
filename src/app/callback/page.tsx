@@ -1,3 +1,4 @@
 import { CallbackPage } from "@/views/callback";
+import { Suspense } from "react";
 
-export default () => <CallbackPage />;
+export default () => <Suspense><CallbackPage /></Suspense>;
