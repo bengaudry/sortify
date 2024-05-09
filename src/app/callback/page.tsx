@@ -1,3 +1,3 @@
-import { CallbackPage } from "@/pages/callback";
+import { CallbackPage } from "@/views/callback";
 
 export default () => <CallbackPage />;

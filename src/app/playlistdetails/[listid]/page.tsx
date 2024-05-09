@@ -1,4 +1,4 @@
-import { PlaylistDetailsPage } from "@/pages/playlistdetails";
+import { PlaylistDetailsPage } from "@/views/playlistdetails";
 
 export default function PlaylistDetails({
   params,

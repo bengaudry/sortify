@@ -1,3 +1,3 @@
-import { WelcomePage } from "@/pages/welcome";
+import { WelcomePage } from "@/views/welcome";
 
 export default () => <WelcomePage />;
