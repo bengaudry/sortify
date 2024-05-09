@@ -78,7 +78,7 @@ export function PlaylistDetailsPage({listid}: {listid: string}) {
         &lt; Back
       </a>
       <header className="pl-2 mb-6 flex flex-row gap-4 items-center">
-        <img src={playlist?.images[0].url} className="w-28 rounded-md" />
+        <img src={playlist?.images[0].url} className="w-28 rounded-md" width={112} height={112} />
         <div>
           <h1 className="font-bold text-3xl">{playlist?.name}</h1>
           <p className="text-spotify-200">
@@ -94,7 +94,7 @@ export function PlaylistDetailsPage({listid}: {listid: string}) {
         href={playlist?.external_urls.spotify}
         target="_blank"
       >
-        <img src="/Spotify_Icon_RGB_Black.png" width={22} />
+        <img src="/Spotify_Icon_RGB_Black.png" width={22} height={22} />
         Play on Spotify
       </CtaLink>
 
@@ -168,6 +168,8 @@ function TrackDisplayer({
         <img
           src={track.album.images[0].url}
           className="h-12 aspect-square rounded-sm mr-2"
+          width={48}
+          height={48}
         />
         <div className="flex flex-col">
           <span className="font-medium">

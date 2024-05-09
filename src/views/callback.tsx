@@ -8,6 +8,7 @@ export function CallbackPage() {
   const code = params.get("code");
   const error = params.get("error");
   const { push } = useRouter();
+  //const { push } = { push: (v: string) => {}}
 
   useEffect(() => {
     if (error) push("/?error=" + error);

@@ -1,23 +1,16 @@
-import { redirect } from "next/navigation";
+import { navigate } from "@/lib/navigate";
 
-const CLIENT_ID = process.env.CLIENT_ENV;
+const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const REDIRECT_URI = "http://localhost:3000/callback";
 
 export const signInWithSpotify = async () => {
-  const code = undefined;
-
-  if (!CLIENT_ID) return;
-
-  if (!code) {
-    redirectToAuthCodeFlow(CLIENT_ID);
-  } else {
-    const { access_token } = await getAccessToken(code);
-    if (!access_token) return;
-    const profile = fetchProfile(access_token);
-  }
+  console.log("here")
+  if (!CLIENT_ID) { return console.log("client id not found"); }
+  redirectToAuthCodeFlow(CLIENT_ID);
 };
 
 export async function redirectToAuthCodeFlow(clientId: string) {
+  console.log("trying bb");
   const verifier = generateCodeVerifier(128);
   const challenge = await generateCodeChallenge(verifier);
 
@@ -34,7 +27,7 @@ export async function redirectToAuthCodeFlow(clientId: string) {
   params.append("code_challenge_method", "S256");
   params.append("code_challenge", challenge);
 
-  redirect(`https://accounts.spotify.com/authorize?${params.toString()}`);
+  navigate(`https://accounts.spotify.com/authorize?${params.toString()}`);
 }
 
 function generateCodeVerifier(length: number) {
@@ -76,6 +69,7 @@ export async function getAccessToken(code: string) {
 
   const { access_token, token_type, expires_in, refresh_token, scope } =
     await result.json();
+  console.log("refresh", refresh_token);
   return { access_token, expires_in } as {
     access_token: string;
     expires_in: number;
