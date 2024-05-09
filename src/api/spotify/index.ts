@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 const CLIENT_ID = process.env.CLIENT_ENV;
 const REDIRECT_URI = "http://localhost:3000/callback";
 
@@ -32,7 +34,7 @@ export async function redirectToAuthCodeFlow(clientId: string) {
   params.append("code_challenge_method", "S256");
   params.append("code_challenge", challenge);
 
-  document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
+  redirect(`https://accounts.spotify.com/authorize?${params.toString()}`);
 }
 
 function generateCodeVerifier(length: number) {
@@ -117,7 +119,7 @@ export async function fetchUsersPlaylists(
   });
 }
 
-export async function fetchPlaylistDetails (listid: string, token: string) {
+export async function fetchPlaylistDetails(listid: string, token: string) {
   return new Promise((resolve, reject) => {
     fetch(`https://api.spotify.com/v1/playlists/${listid}`, {
       method: "GET",
@@ -131,4 +133,4 @@ export async function fetchPlaylistDetails (listid: string, token: string) {
       })
       .catch(reject);
   });
-};
+}
