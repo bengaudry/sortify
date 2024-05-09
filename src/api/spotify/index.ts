@@ -116,3 +116,19 @@ export async function fetchUsersPlaylists(
     headers: { Authorization: `Bearer ${token}` },
   });
 }
+
+export async function fetchPlaylistDetails (listid: string, token: string) {
+  return new Promise((resolve, reject) => {
+    fetch(`https://api.spotify.com/v1/playlists/${listid}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((json) => json.json())
+      .then((data) => {
+        if ("error" in data) reject(data.error);
+        console.log(data);
+        resolve(data);
+      })
+      .catch(reject);
+  });
+};
