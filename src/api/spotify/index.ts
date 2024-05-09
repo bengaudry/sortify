@@ -4,11 +4,13 @@ const REDIRECT_URI = "http://localhost:3000/callback";
 export const signInWithSpotify = async () => {
   const code = undefined;
 
+  if (!CLIENT_ID) return;
+
   if (!code) {
     redirectToAuthCodeFlow(CLIENT_ID);
   } else {
-    const accessToken = await getAccessToken(CLIENT_ID, code);
-    const profile = fetchProfile(accessToken);
+    const { access_token, expires_in } = await getAccessToken(code);
+    const profile = fetchProfile(access_token);
     console.log("profile :", profile);
   }
 };
@@ -51,6 +53,7 @@ async function generateCodeChallenge(codeVerifier: string) {
 }
 
 export async function getAccessToken(code: string) {
+  if (!CLIENT_ID) return null;
   const verifier = localStorage.getItem("verifier");
 
   const params = new URLSearchParams();
