@@ -83,7 +83,7 @@ export function PlaylistsPage() {
           <h2
             ref={headerRef}
             className={`block w-screen sticky ${
-              headerSticked ? "backdrop-blur-3xl bg-spotify-900/70" : "bg-transparent"
+              headerSticked && "backdrop-blur-3xl"
             } -translate-x-6 -top-px font-semibold text-2xl mt-7 py-3 pt-4 px-6`}
           >
             Your playlists
