@@ -9,9 +9,9 @@ export const signInWithSpotify = async () => {
   if (!code) {
     redirectToAuthCodeFlow(CLIENT_ID);
   } else {
-    const { access_token, expires_in } = await getAccessToken(code);
-    const profile = fetchProfile(access_token);
-    console.log("profile :", profile);
+    const tkn = await getAccessToken(code);
+    if (!tkn) return;
+    const profile = fetchProfile(tkn.access_token);
   }
 };
 
