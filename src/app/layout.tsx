@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sortify",
   description: "Sortify, a playlist organizer for spotify.",
+  icons: "/icon.svg"
 };
 
 export default function RootLayout({
