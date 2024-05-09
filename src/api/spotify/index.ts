@@ -14,7 +14,6 @@ export const signInWithSpotify = async () => {
 };
 
 export async function redirectToAuthCodeFlow(clientId: string) {
-  console.log("trying bb");
   const verifier = generateCodeVerifier(128);
   const challenge = await generateCodeChallenge(verifier);
 
@@ -24,7 +23,6 @@ export async function redirectToAuthCodeFlow(clientId: string) {
   params.append("client_id", clientId);
   params.append("response_type", "code");
   params.append("redirect_uri", REDIRECT_URI);
-  console.log(process.env.NODE_ENV)
   params.append(
     "scope",
     "user-read-private user-read-email playlist-read-private playlist-modify-private playlist-modify-public"
@@ -74,7 +72,6 @@ export async function getAccessToken(code: string) {
 
   const { access_token, token_type, expires_in, refresh_token, scope } =
     await result.json();
-  console.log("refresh", refresh_token);
   return { access_token, expires_in } as {
     access_token: string;
     expires_in: number;
@@ -91,27 +88,8 @@ export async function fetchProfile(token: string): Promise<UserProfile> {
 }
 
 export async function fetchUsersPlaylists(
-  uid: string,
   token: string
 ): Promise<any> {
-  // console.info("fetching playlists")
-  // await fetch(`https://api.spotify.com/v1/me/shows?offset=0&limit=20`, {
-  //   method: "GET",
-  //   headers: { Authorization: `Bearer ${token}` },
-  // })
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     console.log(data);
-  //   })
-  //   .catch((err) => console.error(err));
-
-  // return null;
-
-  // return await fetch(`https://api.spotify.com/v1/users/${uid}/playlists`, {
-  //   method: "GET",
-  //   headers: { Authorization: `Bearer ${token}` },
-  // })
-
   return await fetch(`https://api.spotify.com/v1/me/playlists`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },

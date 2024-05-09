@@ -1,7 +1,7 @@
 "use client";
 import { CtaLink } from "@/components/cta";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchPlaylistDetails } from "@/api/spotify";
 
 const formatMsDuration = (duration_ms: number): string => {
@@ -11,11 +11,12 @@ const formatMsDuration = (duration_ms: number): string => {
   return `${minutes}m${seconds}s`;
 };
 
-export function PlaylistDetailsPage({listid}: {listid: string}) {
+export function PlaylistDetailsPage({ listid }: { listid: string }) {
   const r = useRouter();
   const [playlist, setPlaylist] = useState<Playlist>();
   const [tracksItems, setTracksItems] = useState(playlist?.tracks.items);
-  const [previewPlaying, setPreviewPlaying] = useState("");
+  const [isHeaderVisible, setHeaderVisible] = useState(true);
+  const header = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("spotify-token");
@@ -70,33 +71,86 @@ export function PlaylistDetailsPage({listid}: {listid: string}) {
       .then((data) => console.log(data));
   };
 
-  return playlist ? (
+  useEffect(() => {
+    if (!header.current) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        console.log("is intersecting", entry.isIntersecting);
+        setHeaderVisible(entry.isIntersecting);
+      },
+      { threshold: 0.25 }
+    );
+    obs.observe(header.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
     <div
       className={`pl-4 pr-6 py-12 bg-gradient-to-b from-[${playlist?.primary_color}] to-black`}
     >
-      <a href="/playlists" className="block text-spotify-200 mb-4">
-        &lt; Back
-      </a>
-      <header className="pl-2 mb-6 flex flex-row gap-4 items-center">
-        <img src={playlist?.images[0].url} className="w-28 rounded-md" width={112} height={112} />
-        <div>
-          <h1 className="font-bold text-3xl">{playlist?.name}</h1>
-          <p className="text-spotify-200">
-            By {playlist?.owner.display_name}
-            {" • "}
-            {playlist?.description || "No description provided"}
-          </p>
+      <header ref={header}>
+        <a href="/playlists" className="block text-spotify-200 mb-4">
+          &lt; Back
+        </a>
+        <div className="pl-2 mb-6 flex flex-row gap-4 items-center">
+          <img
+            src={playlist?.images[0].url}
+            className="w-28 rounded-md bg-neutral-700"
+            width={112}
+            height={112}
+          />
+          <div>
+            <h1
+              className={`${
+                !playlist && "h-9 bg-neutral-700 w-24"
+              } mb-2 font-bold text-3xl`}
+            >
+              {playlist?.name}
+            </h1>
+            <p className="text-spotify-200 text-sm">
+              <span>
+                By{" "}
+                <span
+                  className={`${
+                    !playlist && "h-4 bg-neutral-700 w-24"
+                  } inline-block`}
+                >
+                  {playlist?.owner.display_name}
+                </span>
+              </span>
+              <span
+                className={`${!playlist && "h-4 bg-neutral-700 w-24"} block`}
+              >
+                {playlist && !playlist.description && "No description provided"}
+              </span>
+            </p>
+          </div>
         </div>
+
+        <CtaLink
+          className="my-6"
+          href={playlist?.external_urls.spotify}
+          target="_blank"
+        >
+          <img src="/Spotify_Icon_RGB_Black.png" width={22} height={22} />
+          Play on Spotify
+        </CtaLink>
       </header>
 
-      <CtaLink
-        className="my-6"
-        href={playlist?.external_urls.spotify}
-        target="_blank"
+      <div
+        className={`fixed w-screen flex justify-between items-center px-3 py-3 backdrop-blur-lg inset-0 bottom-auto ${
+          isHeaderVisible ? "-translate-y-full" : "translate-y-0"
+        } transition-transform duration-500`}
       >
-        <img src="/Spotify_Icon_RGB_Black.png" width={22} height={22} />
-        Play on Spotify
-      </CtaLink>
+        <a href="/playlists" className="flex-1">
+          &lt; Back
+        </a>
+        <div className="flex-1 justify-center flex items-center gap-3">
+          <img src={playlist?.images[0].url} width={32} height={32} className="rounded-md" />
+          <span>{playlist?.name}</span>
+        </div>
+        <div className="flex-1" />
+      </div>
 
       <div className="flex flex-col gap-4">
         {tracksItems?.map((track, idx) => (
@@ -119,17 +173,9 @@ export function PlaylistDetailsPage({listid}: {listid: string}) {
                 return newarr;
               });
             }}
-            onPlay={setPreviewPlaying}
           />
         ))}
       </div>
-    </div>
-  ) : (
-    <div className="w-full h-screen grid place-content-center">
-      <span>Loading playlist details...</span>
-      <a href="/playlists" className="block text-spotify-200 mb-4">
-        &lt; Back
-      </a>
     </div>
   );
 }
@@ -139,13 +185,11 @@ function TrackDisplayer({
   track,
   onup,
   ondown,
-  onPlay,
 }: {
   idx: number;
   track: Track;
   onup: () => void;
   ondown: () => void;
-  onPlay: (url: string) => void;
 }) {
   return (
     <div className="flex flex-row justify-between gap-2">
@@ -167,20 +211,18 @@ function TrackDisplayer({
         </div>
         <img
           src={track.album.images[0].url}
-          className="h-12 aspect-square rounded-sm mr-2"
+          className="h-12 aspect-square rounded-sm mr-2 bg-neutral-600"
           width={48}
           height={48}
         />
         <div className="flex flex-col">
-          <span className="font-medium">
-            {track.name}{" "}
+          <span className="font-medium">{track.name}</span>
+          <span className="text-spotify-200 text-sm">
             {track.explicit && (
-              <span className="inline-grid place-content-center h-4 text-medium bg-spotify-200/50 rounded-sm aspect-square text-sm">
+              <span className="inline-grid place-content-center h-4 text-medium bg-spotify-200/50 text-spotify-900 font-semibold mr-1 rounded-sm aspect-square text-sm">
                 E
               </span>
             )}
-          </span>
-          <span className="text-spotify-200 text-sm">
             {track.artists.map((artist, idx) => {
               if (idx === track.artists.length - 1) return artist.name;
               return artist.name + ", ";

@@ -8,14 +8,13 @@ export function CallbackPage() {
   const code = params.get("code");
   const error = params.get("error");
   const { push } = useRouter();
-  //const { push } = { push: (v: string) => {}}
 
   useEffect(() => {
-    if (error) push("/?error=" + error);
+    if (error) push("/?error=aborted");
   }, [error]);
 
   const fetchUserData = () => {
-    if (!code) return push("/");
+    if (!code) return push("/?error=aborted");
     getAccessToken(code)
       .then(({ access_token, expires_in }) => {
         if (!access_token) throw new Error("Token is undefined");
@@ -27,15 +26,14 @@ export function CallbackPage() {
         push("/playlists");
       })
       .catch((err) => {
-        console.error("Error while fetching token :", err);
-        push("/?error=Failed%20to%20authenticate%20with%20Spotify.%20" + err);
+        push("/?error=token_error");
       });
   };
   useEffect(fetchUserData, []);
 
   return (
     <div className="grid place-content-center w-full h-screen">
-      Connecting to Spotify...
+      Linking to Spotify...
     </div>
   );
 }
