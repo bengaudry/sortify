@@ -25,6 +25,11 @@ body {
   font-style: normal;
 }
 
+.backdrop-blur-3xl {
+  -webkit-backdrop-filter: blur(64px);
+  backdrop-fikter: blur(64px);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
