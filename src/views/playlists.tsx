@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 export function PlaylistsPage () {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [playlists, setPlaylists] = useState<Array<Playlist>>([]);
-
   const { replace } = useRouter();
 
   const fetchUserData = () => {
