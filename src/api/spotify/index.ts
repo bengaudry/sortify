@@ -1,11 +1,15 @@
 import { navigate } from "@/lib/navigate";
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = "http://localhost:3000/callback";
+const REDIRECT_URI = document.location.toString().includes("localhost")
+  ? "http://localhost:3000/callback"
+  : "https://sortify-delta.vercel.app/callback";
 
 export const signInWithSpotify = async () => {
-  console.log("here")
-  if (!CLIENT_ID) { return console.log("client id not found"); }
+  console.log("here");
+  if (!CLIENT_ID) {
+    return console.log("client id not found");
+  }
   redirectToAuthCodeFlow(CLIENT_ID);
 };
 
