@@ -25,7 +25,7 @@ body {
   font-style: normal;
 }
 
-.backdrop-blur-3xl {
+.backdrop-blurred {
   -webkit-backdrop-filter: blur(64px);
   backdrop-fikter: blur(64px);
 }
