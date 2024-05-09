@@ -24,6 +24,7 @@ export async function redirectToAuthCodeFlow(clientId: string) {
   params.append("client_id", clientId);
   params.append("response_type", "code");
   params.append("redirect_uri", REDIRECT_URI);
+  console.log(process.env.NODE_ENV)
   params.append(
     "scope",
     "user-read-private user-read-email playlist-read-private playlist-modify-private playlist-modify-public"
