@@ -13,9 +13,12 @@ export function PlaylistsPage() {
   const [headerSticked, setHeaderSticked] = useState(false);
 
   useEffect(() => {
+    console.log("ref", headerRef.current)
     if (!headerRef.current) return;
+
     const obs = new IntersectionObserver(
       ([entry]) => {
+        console.log(entry.intersectionRatio)
         setHeaderSticked(entry.intersectionRatio < 1);
       },
       { threshold: 1 }
