@@ -82,12 +82,12 @@ export function PlaylistsPage() {
         <div>
           <div
             ref={headerRef}
-            className={`block w-screen sticky -translate-x-6 -top-px mt-7`}
+            className={`block w-screen sticky -translate-x-6 -top-1 mt-7`}
           >
             <div className="relative overflow-hidden">
               <div
                 className={`absolute top-0 left-0 right-0 -z-10 w-full h-full ${
-                  !headerSticked && "backdrop-blur-3xl"
+                  headerSticked && "backdrop-blur-3xl"
                 } bg-transparent`}
               />
               <h2 className="font-semibold text-2xl z-20 py-3 pt-4 px-6">
