@@ -9,7 +9,7 @@ export function PlaylistsPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [playlists, setPlaylists] = useState<Array<Playlist>>([]);
   const [onlyThisUsersPlaylists, setOnlyThisUsersPlaylists] = useState(true);
-  const headerRef = useRef<HTMLHeadingElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const [headerSticked, setHeaderSticked] = useState(false);
 
   useEffect(() => {
@@ -48,8 +48,8 @@ export function PlaylistsPage() {
 
   return profile ? (
     <>
-      <div className="absolute blur-3xl z-0 bg-spotify-500 w-96 aspect-square rounded-full -top-48 -left-36" />
-      <main className="absolute px-6 py-12 z-20 bg-spotify-900/70">
+      <div className="absolute blur-3xl -z-10 bg-spotify-500 w-96 aspect-square rounded-full -top-48 -left-36" />
+      <main className="px-6 py-12 bg-spotify-900/70">
         <div className="flex flex-col sm:flex-row items-start justify-between">
           <div className="flex flex-row gap-6 items-center overflow-y-scroll">
             <div
@@ -80,14 +80,22 @@ export function PlaylistsPage() {
         </div>
 
         <div>
-          <h2
+          <div
             ref={headerRef}
-            className={`block w-screen sticky ${
-              headerSticked && "backdrop-blur-3xl"
-            } -translate-x-6 -top-px font-semibold text-2xl mt-7 py-3 pt-4 px-6`}
+            className={`block w-screen sticky -translate-x-6 -top-px mt-7`}
           >
-            Your playlists
-          </h2>
+            <div className="relative overflow-hidden">
+              <div
+                className={`absolute top-0 left-0 right-0 -z-10 w-full h-full ${
+                  headerSticked && "backdrop-blur-3xl"
+                } bg-transparent`}
+              />
+              <h2 className="font-semibold text-2xl z-20 py-3 pt-4 px-6">
+                Your playlists {JSON.stringify(headerSticked)}
+              </h2>
+            </div>
+          </div>
+
           <CtaLink
             href={profile?.external_urls.spotify}
             target="_blank"
