@@ -146,7 +146,12 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
           &lt; Back
         </a>
         <div className="flex-1 justify-center flex items-center gap-3">
-          <img src={playlist?.images[0].url} width={32} height={32} className="rounded-md" />
+          <img
+            src={playlist?.images[0].url}
+            width={32}
+            height={32}
+            className="rounded-md"
+          />
           <span>{playlist?.name}</span>
         </div>
         <div className="flex-1" />
@@ -198,15 +203,15 @@ function TrackDisplayer({
         <div className="flex flex-col">
           <button
             onClick={onup}
-            className="flex-1 w-6 text-spotify-200 hover:text-spotify-100 hover:scale-150 transition-all"
+            className="flex-1 w-6 text-lg text-spotify-200 hover:text-spotify-100 hover:scale-150 transition-all"
           >
-            ⭡
+            <i className="fi fi-rr-arrow-alt-square-up" />
           </button>
           <button
             onClick={ondown}
-            className="flex-1 w-6 text-spotify-200 hover:text-spotify-100 hover:scale-150 transition-all"
+            className="flex-1 w-6 text-lg text-spotify-200 hover:text-spotify-100 hover:scale-150 transition-all"
           >
-            ⭣
+            <i className="fi fi-rr-arrow-alt-square-down" />
           </button>
         </div>
         <img

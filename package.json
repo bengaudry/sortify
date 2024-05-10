@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@flaticon/flaticon-uicons": "^3.2.1",
     "@vercel/analytics": "^1.2.2",
     "next": "14.2.3",
     "react": "^18",

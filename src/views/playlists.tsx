@@ -85,7 +85,7 @@ export function PlaylistsPage() {
         <div>
           <div
             ref={headerRef}
-            className={`block w-screen sticky -translate-x-6 -top-1 mt-7`}
+            className={`block w-screen sticky -translate-x-6 -top-1 mt-7 bg-spotify-900`}
           >
             <div className="relative overflow-hidden">
               <div
@@ -94,7 +94,7 @@ export function PlaylistsPage() {
                 } bg-transparent`}
               />
               <h2 className="font-semibold text-2xl z-20 py-3 pt-4 px-6">
-                Your playlists {JSON.stringify(headerSticked)}
+                Your playlists
               </h2>
             </div>
           </div>
