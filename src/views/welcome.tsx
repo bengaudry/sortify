@@ -2,6 +2,7 @@
 import { signInWithSpotify } from "@/api/spotify";
 import { CtaButton } from "@/components/cta";
 import { Toast, ToastContainer } from "@/components/toast";
+import { checkTokenValidity } from "@/lib/token";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -12,16 +13,7 @@ export function WelcomePage() {
   const { push } = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("spotify-token");
-    const expires_at = localStorage.getItem("spotify-token-expiration");
-    const now = Date.now();
-
-    if (token && expires_at && now < parseInt(expires_at)) push("/playlists");
-    else {
-      // Remove old tokens
-      localStorage.removeItem("spotify-token");
-      localStorage.removeItem("spotify-token-expiration");
-    }
+    if (checkTokenValidity()) push("/playlists");
   }, []);
 
   return (
@@ -29,10 +21,16 @@ export function WelcomePage() {
       <ToastContainer>
         {err && (
           <Toast
-            title="Linking was not successfull"
+            title={
+              err === "token_expired"
+                ? "Token has expired"
+                : "Linking was not successful"
+            }
             message={
               err === "aborted"
                 ? "Linking with spotify has been aborted. Please click on Accept button to continue."
+                : err === "token_expired"
+                ? "The linking to your Spotify account has ended. Please connect again"
                 : "Error while linking to Spotify. Please try again or contact the dev"
             }
             type="error"
@@ -63,7 +61,13 @@ export function WelcomePage() {
         <footer className="text-center pt-4 pb-8 border-t-2 border-white/10 text-spotify-200/50">
           <span>© {new Date().getFullYear()} Ben Gaudry</span>
           <br />
-          <a className="text-spotify-500 font-medium" href="https://github.com/bengaudry/sortify" target="_blank">See on GitHub &gt;</a>
+          <a
+            className="text-spotify-500 font-medium"
+            href="https://github.com/bengaudry/sortify"
+            target="_blank"
+          >
+            See on GitHub &gt;
+          </a>
         </footer>
       </main>
     </>

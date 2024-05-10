@@ -1,6 +1,7 @@
 "use client";
 import { fetchProfile, fetchUsersPlaylists } from "@/api/spotify";
 import { CtaLink } from "@/components/cta";
+import { checkTokenValidity, getToken } from "@/lib/token";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -13,12 +14,12 @@ export function PlaylistsPage() {
   const [headerSticked, setHeaderSticked] = useState(false);
 
   useEffect(() => {
-    console.log("ref", headerRef.current)
+    console.log("ref", headerRef.current);
     if (!headerRef.current) return;
 
     const obs = new IntersectionObserver(
       ([entry]) => {
-        console.log(entry.intersectionRatio)
+        console.log(entry.intersectionRatio);
         setHeaderSticked(entry.intersectionRatio < 1);
       },
       { threshold: 1 }
@@ -29,8 +30,8 @@ export function PlaylistsPage() {
   }, []);
 
   const fetchUserData = () => {
-    const token = localStorage.getItem("spotify-token");
-    if (!token) return push("/");
+    checkTokenValidity({ withRedirect: true });
+    const token = getToken() as string;
     fetchProfile(token)
       .then((p) => {
         setProfile(p);

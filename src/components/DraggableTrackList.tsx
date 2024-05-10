@@ -1,5 +1,4 @@
 "use client";
-
 import {
   DndContext,
   closestCorners,
@@ -40,7 +39,7 @@ export function DraggableTrackList({
 }) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { delay: 100, distance: 0},
+      activationConstraint: { delay: 100, distance: 0 },
     }),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -122,6 +121,8 @@ function TrackDisplayer({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: idx });
 
+  const { album, explicit, artists, duration_ms, name } = track;
+
   const style = {
     transition,
     transform: CSS.Translate.toString(transform),
@@ -145,19 +146,19 @@ function TrackDisplayer({
           <C.ArrowBtn onClick={onup} up />
           <C.ArrowBtn onClick={ondown} />
         </div>
-        <C.Cover url={track.album.images[0].url} />
+        <C.Cover url={album.images[0].url} />
         <div className="flex flex-col">
-          <span className="font-medium">{track.name}</span>
+          <span className="font-medium">{name}</span>
           <span className="text-spotify-200 text-sm">
-            {track.explicit && <C.ExplicitContent />}
-            {track.artists.map((artist, idx) => {
-              if (idx === track.artists.length - 1) return artist.name;
+            {explicit && <C.ExplicitContent />}
+            {artists.map((artist, idx) => {
+              if (idx === artists.length - 1) return artist.name;
               return artist.name + ", ";
             })}
           </span>
         </div>
       </div>
-      <C.Duration dur={track.duration_ms} />
+      <C.Duration dur={duration_ms} />
     </div>
   );
 }
