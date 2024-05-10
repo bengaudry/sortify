@@ -3,31 +3,7 @@ import { CtaLink } from "@/components/cta";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { fetchPlaylistDetails } from "@/api/spotify";
-import {
-  closestCorners,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { track } from "@vercel/analytics";
-import { CSS } from "@dnd-kit/utilities";
-
-const formatMsDuration = (duration_ms: number): string => {
-  let seconds = Math.floor(duration_ms / 1000);
-  let minutes = Math.floor(seconds / 60);
-  seconds -= 60 * minutes;
-  return `${minutes}m${seconds}s`;
-};
+import { DraggableTrackList } from "@/components/DraggableTrackList";
 
 export function PlaylistDetailsPage({ listid }: { listid: string }) {
   const r = useRouter();
@@ -44,12 +20,6 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
       setTracksItems((data as Playlist).tracks.items);
     });
   }, []);
-
-  const getAllUris = (items: PlaylistTrackObject[]) => {
-    const uris: string[] = [];
-    items.map((item) => uris.push(item.track.uri));
-    return uris;
-  };
 
   useEffect(() => {}, [tracksItems]);
 
@@ -101,12 +71,6 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
     obs.observe(header.current);
     return () => obs.disconnect();
   }, []);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
 
   return (
     <div
@@ -181,132 +145,12 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
         <div className="flex-1" />
       </div>
 
-      {tracksItems && (
-        <DndContext
-          collisionDetection={closestCorners}
-          sensors={sensors}
-          onDragEnd={(e) => {
-            console.log("dragend", e);
-            const { active, over } = e;
-            if (!over || !tracksItems || active.id === over.id) return;
-
-            setTracksItems((items) => {
-              const originalPos = active.id as number;
-              const newPos = over.id ? parseInt(over.id.toString()) : 0;
-
-              return arrayMove(
-                items as PlaylistTrackObject[],
-                originalPos,
-                newPos
-              );
-            });
-          }}
-        >
-          <div className="flex flex-col">
-            <SortableContext
-              items={tracksItems.map((_, index) => index)}
-              strategy={verticalListSortingStrategy}
-            >
-              {tracksItems.map((track, idx) => (
-                <TrackDisplayer
-                  idx={idx}
-                  key={idx}
-                  track={track.track}
-                  onup={() => {
-                    setTracksItems((prev) => {
-                      const newarr = prev?.filter((_, i) => i !== idx);
-                      newarr?.splice(idx - 1, 0, track);
-                      moveSongUp(idx);
-                      return newarr;
-                    });
-                  }}
-                  ondown={() => {
-                    setTracksItems((prev) => {
-                      const newarr = prev?.filter((_, i) => i !== idx);
-                      newarr?.splice(idx + 1, 0, track);
-                      moveSongDown(idx);
-                      return newarr;
-                    });
-                  }}
-                />
-              ))}
-            </SortableContext>
-          </div>
-        </DndContext>
-      )}
-    </div>
-  );
-}
-
-function TrackDisplayer({
-  idx,
-  track,
-  onup,
-  ondown,
-}: {
-  idx: number;
-  track: Track;
-  onup: () => void;
-  ondown: () => void;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: idx });
-
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={style}
-      className="flex flex-row justify-between gap-2 py-2 select-none"
-    >
-      <div className="flex flex-row items-center">
-        <span className="text-white/50 w-4 text-right mr-2">{idx + 1}</span>
-        <div className="flex flex-col">
-          <button
-            onClick={onup}
-            className="flex-1 w-6 text-lg text-spotify-200 hover:text-spotify-100 hover:scale-150 transition-all"
-          >
-            <i className="fi fi-rr-arrow-alt-square-up" />
-          </button>
-          <button
-            onClick={ondown}
-            className="flex-1 w-6 text-lg text-spotify-200 hover:text-spotify-100 hover:scale-150 transition-all"
-          >
-            <i className="fi fi-rr-arrow-alt-square-down" />
-          </button>
-        </div>
-        <img
-          src={track.album.images[0].url}
-          className="h-12 aspect-square rounded-sm mr-2 bg-neutral-600"
-          width={48}
-          height={48}
-        />
-        <div className="flex flex-col">
-          <span className="font-medium">{track.name}</span>
-          <span className="text-spotify-200 text-sm">
-            {track.explicit && (
-              <span className="inline-grid place-content-center h-4 text-medium bg-spotify-200/50 text-spotify-900 font-semibold mr-1 rounded-sm aspect-square text-sm">
-                E
-              </span>
-            )}
-            {track.artists.map((artist, idx) => {
-              if (idx === track.artists.length - 1) return artist.name;
-              return artist.name + ", ";
-            })}
-          </span>
-        </div>
-      </div>
-      <div className="flex flex-col items-end justify-center">
-        <span className="text-spotify-200 text-xs">
-          {formatMsDuration(track.duration_ms)}
-        </span>
-      </div>
+      <DraggableTrackList
+        tracksItems={tracksItems}
+        setTracksItems={setTracksItems}
+        moveSongDown={moveSongDown}
+        moveSongUp={moveSongUp}
+      />
     </div>
   );
 }
