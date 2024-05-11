@@ -3,7 +3,7 @@ import { navigate } from "@/lib/navigate";
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const REDIRECT_URI = process.env.NODE_ENV === "development"
   ? "http://localhost:3000/callback"
-  : "https://sortify-delta.vercel.app/callback";
+  : "https://websortify.vercel.app/callback";
 
 export const signInWithSpotify = async () => {
   console.log("here");

@@ -41,7 +41,12 @@ export function DraggableTrackList({
     useSensor(PointerSensor, {
       activationConstraint: { delay: 100, distance: 0 },
     }),
-    useSensor(TouchSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
@@ -58,17 +63,19 @@ export function DraggableTrackList({
 
           setTracksItems((items) => {
             const originalPos = active.id as number;
-            const newPos = over.id ? parseInt(over.id.toString()) : 0;
+            const newPos = over.id as number;
+
+            console.log("active, over: ", active.id, over.id)
 
             return arrayMove(
               items as PlaylistTrackObject[],
-              originalPos,
-              newPos
+              originalPos - 1,
+              newPos - 1
             );
           });
         }}
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col pb-8">
           <SortableContext
             items={tracksItems.map((_, index) => index)}
             strategy={verticalListSortingStrategy}
@@ -119,7 +126,7 @@ function TrackDisplayer({
   ondown: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: idx });
+    useSortable({ id: idx + 1 });
 
   const { album, explicit, artists, duration_ms, name } = track;
 
@@ -131,18 +138,16 @@ function TrackDisplayer({
   return (
     <div
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
       style={style}
       role="button"
       tabIndex={0}
       aria-roledescription="draggable"
       aria-describedby={`DndContext-${idx}`}
-      className="flex flex-row justify-between gap-2 py-2 select-none"
+      className="flex flex-row justify-between gap-2 py-2 select-none hover:cursor-default"
     >
       <div className="flex flex-row items-center">
         <span className="text-white/50 w-4 text-right mr-2">{idx + 1}</span>
-        <div className="flex flex-col">
+        <div className="hidden sm:flex flex-col">
           <C.ArrowBtn onClick={onup} up />
           <C.ArrowBtn onClick={ondown} />
         </div>
@@ -158,7 +163,14 @@ function TrackDisplayer({
           </span>
         </div>
       </div>
-      <C.Duration dur={duration_ms} />
+      <div className="flex items-center justify-end">
+        <C.Duration dur={duration_ms} />
+        <i
+          className="fi fi-rr-menu-burger h-full flex items-center justify-end pl-2 pr-6 text-spotify-200 active:cursor-move"
+          {...attributes}
+          {...listeners}
+        />
+      </div>
     </div>
   );
 }
