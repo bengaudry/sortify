@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const URL = "https://websortify.vercel.com/";
+const URL = "https://websortify.vercel.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -10,13 +10,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: URL + "playlists",
+      url: URL + "/playlists",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
-      url: URL + "playlistdetails",
+      url: URL + "/playlistdetails",
       lastModified: new Date(),
       changeFrequency: "monthly",
     },
