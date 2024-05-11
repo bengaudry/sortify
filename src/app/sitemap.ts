@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const URL = "https://websortify.vercel.com";
+const URL = "https://websortify.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
