@@ -19,23 +19,26 @@ export function LegalPage() {
           <img src="/icon-rounded.svg" width={30} height={30} />
           <span className="text-spotify-200 font-medium text-xl">Sortify</span>
         </a>
-        <select
-          className="bg-spotify-700 px-4 py-2 rounded-sm"
-          onChange={({ target: { value } }) =>
-            setLang(value === "en" || value === "fr" ? value : "en")
-          }
-        >
-          <option selected={lang === "en"} value="en">
-            English
-          </option>
-          <option selected={lang === "fr"} value="fr">
-            Français
-          </option>
-        </select>
+        <div className="w-fit relative flex items-center">
+          <select
+            className="bg-spotify-700 pl-4 pr-10 py-2 rounded-md appearance-none"
+            onChange={({ target: { value } }) =>
+              setLang(value === "en" || value === "fr" ? value : "en")
+            }
+          >
+            <option selected={lang === "en"} value="en">
+              English
+            </option>
+            <option selected={lang === "fr"} value="fr">
+              Français
+            </option>
+          </select>
+          <i className="fi fi-rr-angle-down text-xs absolute right-3 translate-y-0.5 pointer-events-none" />
+        </div>
       </div>
 
       <ReactMarkdown
-        className="px-12"
+        className="px-6 sm:px-12"
         components={{
           a: ({ className, target, ...otherProps }) => (
             <a
@@ -48,7 +51,7 @@ export function LegalPage() {
           ),
           h1: ({ className, ...otherProps }) => (
             <h1
-              className="block w-screen -ml-12 pl-12 text-4xl font-bold mt-6 py-3 bg-spotify-800/50 sticky top-20 backdrop-blur-md"
+              className="block w-screen -ml-6 sm:-ml-12 pl-6 sm:pl-12 text-3xl sm:text-4xl font-bold mt-6 py-3 bg-[#00000000] sticky top-20 backdrop-blur-md"
               {...otherProps}
             />
           ),
@@ -65,7 +68,7 @@ export function LegalPage() {
       >
         {lang in legalmd ? legalmd[lang] : legalmd["en"]}
       </ReactMarkdown>
-      <div className="w-full flex justify-end px-12">
+      <div className="w-full flex justify-end px-6 sm:px-12">
         <button
           className="bg-spotify-700 aspect-square w-14 rounded-xl"
           onClick={() => {
