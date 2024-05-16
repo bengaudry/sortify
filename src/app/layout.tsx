@@ -21,6 +21,7 @@ export default function RootLayout({
           name="google-site-verification"
           content="qahsQX4WivRzCsj09PgkH6eyxiPYZeruTfqmHj2kSBM"
         />
+        <meta name="google-adsense-account" content="ca-pub-9717273868571983"></meta>
       </head>
       <body>
         <Analytics />
