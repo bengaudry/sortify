@@ -110,7 +110,7 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
       </header>
 
       <div
-        className={`fixed w-screen flex justify-between items-center pl-3 pr-9 py-3 backdrop-blur-lg inset-0 bottom-auto ${
+        className={`fixed w-screen flex justify-between items-center pl-3 pr-9 py-3 z-20 backdrop-blur-lg inset-0 bottom-auto ${
           isHeaderVisible ? "-translate-y-full" : "translate-y-0"
         } transition-transform duration-500`}
       >

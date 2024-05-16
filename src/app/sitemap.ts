@@ -9,5 +9,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       priority: 1,
     },
+    {
+      url: `${URL}/legal`,
+      lastModified: new Date(),
+      priority: 0.2,
+    },
   ];
 }

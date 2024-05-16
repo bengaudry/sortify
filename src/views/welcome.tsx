@@ -61,13 +61,16 @@ export function WelcomePage() {
         <footer className="text-center pt-4 pb-8 border-t-2 border-white/10 text-spotify-200/50">
           <span>© {new Date().getFullYear()} Ben Gaudry</span>
           <br />
-          <a
-            className="text-spotify-500 font-medium"
-            href="https://github.com/bengaudry/sortify"
-            target="_blank"
-          >
-            See on GitHub &gt;
-          </a>
+          <div className="flex items-center gap-4 justify-center">
+            <a href="/legal">Legal notice</a>
+            <a
+              className="text-spotify-500 font-medium"
+              href="https://github.com/bengaudry/sortify"
+              target="_blank"
+            >
+              See on GitHub &gt;
+            </a>
+          </div>
         </footer>
       </main>
     </>

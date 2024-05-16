@@ -8,7 +8,7 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      sans: ["Poppins", "sans-serif"]
+      sans: ["Poppins", "sans-serif"],
     },
     extend: {
       backgroundImage: {
@@ -23,9 +23,10 @@ const config: Config = {
           400: "#1fdf64",
           500: "#1DB954",
           600: "#169c46",
-          900: "#191414"
-        }
-      }
+          800: "#202622",
+          900: "#191414",
+        },
+      },
     },
   },
   plugins: [],
