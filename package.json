@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "git add . && git commit -m \"New deployment on branch main\" && git push"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
