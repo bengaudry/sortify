@@ -50,9 +50,9 @@ export function WelcomePage() {
           <CtaButton onClick={signInWithSpotify}>
             <img
               src="/Spotify_Icon_RGB_Black.png"
-              className="w-6 aspect-square"
-              width={24}
-              height={24}
+              className="w-7 aspect-square"
+              width={28}
+              height={28}
             />
             <span>Sign in with spotify</span>
           </CtaButton>

@@ -75,7 +75,7 @@ export function DraggableTrackList({
           });
         }}
       >
-        <div className="flex flex-col pb-8">
+        <div className="flex flex-col pb-8 w-full">
           <SortableContext
             items={tracksItems.map((_, index) => index)}
             strategy={verticalListSortingStrategy}
@@ -146,11 +146,7 @@ function TrackDisplayer({
       className="flex flex-row justify-between gap-2 py-2 select-none hover:cursor-default"
     >
       <div className="flex flex-row items-center">
-        <span className="text-white/50 w-4 text-right mr-2">{idx + 1}</span>
-        <div className="hidden sm:flex flex-col">
-          <C.ArrowBtn onClick={onup} up />
-          <C.ArrowBtn onClick={ondown} />
-        </div>
+        <span className="text-white/50 w-4 text-right">{idx + 1}</span>
         <C.Cover
           imgurl={album.images[0].url}
           spotifyurl={external_urls.spotify}
@@ -168,11 +164,17 @@ function TrackDisplayer({
       </div>
       <div className="flex items-center justify-end">
         <C.Duration dur={duration_ms} />
-        <i
-          className="fi fi-rr-menu-burger h-full flex items-center justify-end pl-2 pr-6 text-spotify-200 active:cursor-move"
-          {...attributes}
-          {...listeners}
-        />
+        <div className="flex flex-col sm:flex-row md:flex-row-reverse ml-2">
+          <C.ArrowBtn onClick={onup} up />
+          <C.ArrowBtn onClick={ondown} />
+        </div>
+        {process.env.NODE_ENV === "development" && (
+          <i
+            className="fi fi-rr-menu-burger h-full flex items-center justify-end pl-2 pr-6 text-spotify-200 active:cursor-move"
+            {...attributes}
+            {...listeners}
+          />
+        )}
       </div>
     </div>
   );
@@ -185,9 +187,14 @@ const C = {
     </span>
   ),
   Cover: ({ imgurl, spotifyurl }: { imgurl: string; spotifyurl: string }) => (
-    <a className="relative w-fit block" target="_blank" href={spotifyurl}>
+    <a className="relative w-fit block ml-2" target="_blank" href={spotifyurl}>
       <div className="absolute w-full h-full grid place-content-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity">
-        <img src="/Spotify_Icon_RGB_White.png" width={22} height={22} />
+        <img
+          src="/Spotify_Icon_RGB_White.png"
+          width={28}
+          height={28}
+          className="aspect-square w-7"
+        />
       </div>
       <img
         src={imgurl}
@@ -200,9 +207,13 @@ const C = {
   ArrowBtn: ({ up, onClick }: { up?: boolean; onClick: () => void }) => (
     <button
       onClick={onClick}
-      className="flex-1 w-6 text-lg text-spotify-200 hover:text-spotify-100 hover:scale-150 transition-all"
+      className="flex-1 w-6 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 transition-colors"
     >
-      <i className={`fi fi-rr-arrow-alt-square-${up ? "up" : "down"}`} />
+      <i
+        className={`fi fi-rr-arrow-alt-square-${
+          up ? "up" : "down"
+        } md:text-2xl translate-y-0.5`}
+      />
     </button>
   ),
   Duration: ({ dur }: { dur: number }) => (

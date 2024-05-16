@@ -57,84 +57,142 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
   }, []);
 
   return (
-    <div
-      className={`pl-4 py-12 bg-gradient-to-b from-[${playlist?.primary_color}] to-black`}
-    >
-      <header ref={header}>
-        <a href="/playlists" className="block text-spotify-200 mb-4">
-          &lt; Back
-        </a>
-        <div className="pl-2 mb-6 flex flex-row gap-4 items-center">
-          <img
-            src={playlist?.images[0].url}
-            className="w-28 rounded-md bg-neutral-700"
-            width={112}
-            height={112}
-          />
-          <div>
-            <h1
-              className={`${
-                !playlist && "h-9 bg-neutral-700 w-24"
-              } mb-2 font-bold text-3xl`}
-            >
-              {playlist?.name}
-            </h1>
-            <p className="text-spotify-200 text-sm">
-              <span>
-                By{" "}
-                <span
-                  className={`${
-                    !playlist && "h-4 bg-neutral-700 w-24"
-                  } inline-block`}
-                >
-                  {playlist?.owner.display_name}
-                </span>
-              </span>
-              <span
-                className={`${!playlist && "h-4 bg-neutral-700 w-24"} block`}
-              >
-                {playlist && !playlist.description && "No description provided"}
-              </span>
-            </p>
-          </div>
-        </div>
-
-        <CtaLink
-          className="my-6"
-          href={playlist?.external_urls.spotify}
-          target="_blank"
-        >
-          <img src="/Spotify_Icon_RGB_Black.png" width={22} height={22} />
-          Play on Spotify
-        </CtaLink>
-      </header>
-
+    <div>
       <div
-        className={`fixed w-screen flex justify-between items-center pl-3 pr-9 py-3 z-20 backdrop-blur-lg inset-0 bottom-auto ${
-          isHeaderVisible ? "-translate-y-full" : "translate-y-0"
-        } transition-transform duration-500`}
+        className={`lg:hidden pl-4 py-12 bg-gradient-to-b from-[${playlist?.primary_color}] to-black`}
       >
-        <a href="/playlists" className="flex-1">
-          &lt; Back
-        </a>
-        <div className="flex-1 justify-center flex items-center gap-3">
-          <img
-            src={playlist?.images[0].url}
-            width={32}
-            height={32}
-            className="rounded-md"
-          />
-          <span>{playlist?.name}</span>
+        <header ref={header}>
+          <a href="/playlists" className="block text-spotify-200 mb-4">
+            &lt; Back
+          </a>
+          <div className="pl-2 mb-6 flex flex-row gap-4 items-center">
+            <img
+              src={playlist?.images[0].url}
+              className="w-28 rounded-md bg-neutral-700"
+              width={112}
+              height={112}
+            />
+            <div>
+              <h1
+                className={`${
+                  !playlist && "h-9 bg-neutral-700 w-24"
+                } mb-2 font-bold text-3xl`}
+              >
+                {playlist?.name}
+              </h1>
+              <p className="text-spotify-200 text-sm">
+                <span>
+                  By{" "}
+                  <span
+                    className={`${
+                      !playlist && "h-4 bg-neutral-700 w-24"
+                    } inline-block`}
+                  >
+                    {playlist?.owner.display_name}
+                  </span>
+                </span>
+                <span
+                  className={`${!playlist && "h-4 bg-neutral-700 w-24"} block`}
+                >
+                  {playlist &&
+                    !playlist.description &&
+                    "No description provided"}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <CtaLink
+            className="my-6"
+            href={playlist?.external_urls.spotify}
+            target="_blank"
+          >
+            <img src="/Spotify_Icon_RGB_Black.png" width={28} height={28} />
+            Open in Spotify
+          </CtaLink>
+        </header>
+
+        <div
+          className={`fixed w-screen flex justify-between items-center pl-3 pr-9 py-3 z-20 backdrop-blur-lg inset-0 bottom-auto ${
+            isHeaderVisible ? "-translate-y-full" : "translate-y-0"
+          } transition-transform duration-500`}
+        >
+          <a href="/playlists" className="flex-1">
+            &lt; Back
+          </a>
+          <div className="flex-1 justify-center flex items-center gap-3">
+            <img
+              src={playlist?.images[0].url}
+              width={32}
+              height={32}
+              className="rounded-md"
+            />
+            <span>{playlist?.name}</span>
+          </div>
+          <div className="flex-1" />
         </div>
-        <div className="flex-1" />
+
+        <DraggableTrackList
+          tracksItems={tracksItems}
+          setTracksItems={setTracksItems}
+          moveSongDown={moveSongDown}
+          moveSongUp={moveSongUp}
+        />
       </div>
 
-      <DraggableTrackList
-        tracksItems={tracksItems}
-        setTracksItems={setTracksItems}
-        moveSongDown={moveSongDown}
-        moveSongUp={moveSongUp}
-      />
+      <div
+        className={`hidden lg:flex flex-col pl-4 pt-12 pb-20 bg-gradient-to-b from-spotify-800 to-spotify-900`}
+      >
+        <header ref={header}>
+          <a href="/playlists" className="text-spotify-200 w-fit">
+            &lt; Back
+          </a>
+          <h1
+            className={`${
+              !playlist && "h-9 bg-neutral-700 w-24"
+            } mb-2 font-bold text-6xl text-center`}
+          >
+            {playlist?.name}
+          </h1>
+        </header>
+
+        <div className="flex flex-row items-start gap-12 px-12 pt-6">
+          <aside className="sticky top-12 rounded-3xl overflow-hidden">
+            <div className="bg-spotify-700 p-6 shadow-2xl">
+              <img
+                src={playlist?.images[0].url}
+                className="w-96 bg-neutral-700 shadow-xl"
+                width={384}
+                height={384}
+              />
+              <p className="text-spotify-200 text-sm mt-3 text-center">
+                <span>By {playlist?.owner.display_name}</span>
+                <span
+                  className={`${!playlist && "h-4 bg-neutral-700 w-24"} block`}
+                >
+                  {playlist?.tracks.total} songs
+                </span>
+                <span>{playlist?.description}</span>
+              </p>{" "}
+            </div>
+            <CtaLink
+              className="w-full rounded-none"
+              href={playlist?.external_urls.spotify}
+              target="_blank"
+            >
+              <img src="/Spotify_Icon_RGB_Black.png" width={28} height={28} />
+              Open in Spotify
+            </CtaLink>
+          </aside>
+
+          <DraggableTrackList
+            tracksItems={tracksItems}
+            setTracksItems={setTracksItems}
+            moveSongDown={moveSongDown}
+            moveSongUp={moveSongUp}
+          />
+        </div>
+      </div>
     </div>
   );
 }

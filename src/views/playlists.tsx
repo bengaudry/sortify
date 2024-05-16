@@ -72,12 +72,16 @@ export function PlaylistsPage() {
                 {profile?.followers.total} followers
               </p>
               <button
-                className="block w-fit bg-neutral-700 hover:bg-red-600 px-4 py-1 mt-2 rounded-full text-sm font-medium text-spotify-100"
+                className="flex items-center gap-2 w-fit bg-neutral-700 hover:bg-red-600 px-4 py-1 mt-2 rounded-full text-sm font-medium text-spotify-100"
                 onClick={() => {
                   push("/signout");
                 }}
               >
+                <span>
+
                 Sign out
+                </span>
+                <i className="fi fi-rr-exit translate-y-0.5" />
               </button>
             </div>
           </div>

@@ -1,4 +1,6 @@
 import { useRouter } from "next/navigation";
+import { Router } from "next/router";
+import { navigate } from "./navigate";
 
 /** Checks in local storage if the token exists and is still valid. */
 export function checkTokenValidity(opt?: {
@@ -13,8 +15,7 @@ export function checkTokenValidity(opt?: {
 
   deleteToken();
   if (opt?.withRedirect) {
-    const { push } = useRouter();
-    push(
+    navigate(
       `${opt?.redirectOptions?.url ?? "/"}?error=${
         opt?.redirectOptions?.error ?? "token_expired"
       }`
