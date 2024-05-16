@@ -31,11 +31,15 @@ export function DraggableTrackList({
   setTracksItems,
   moveSongUp,
   moveSongDown,
+  moveSongUptoTop,
+  moveSongDowntoBottom,
 }: {
   tracksItems: PlaylistTrackObject[] | undefined;
   setTracksItems: Dispatch<SetStateAction<PlaylistTrackObject[] | undefined>>;
   moveSongUp: (songIdx: number) => void;
   moveSongDown: (songIdx: number) => void;
+  moveSongUptoTop: (songIdx: number) => void;
+  moveSongDowntoBottom: (songIdx: number) => void;
 }) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -87,18 +91,39 @@ export function DraggableTrackList({
                 track={track.track}
                 onup={() => {
                   setTracksItems((prev) => {
-                    const newarr = prev?.filter((_, i) => i !== idx);
-                    newarr?.splice(idx - 1, 0, track);
                     moveSongUp(idx);
-                    return newarr;
+                    return arrayMove(
+                      prev as PlaylistTrackObject[],
+                      idx,
+                      idx - 1
+                    );
                   });
                 }}
                 ondown={() => {
                   setTracksItems((prev) => {
-                    const newarr = prev?.filter((_, i) => i !== idx);
-                    newarr?.splice(idx + 1, 0, track);
-                    moveSongDown(idx);
-                    return newarr;
+                    moveSongUp(idx);
+                    return arrayMove(
+                      prev as PlaylistTrackObject[],
+                      idx,
+                      idx + 1
+                    );
+                  });
+                }}
+                onDowntoBottom={() => {
+                  setTracksItems((prev) => {
+                    moveSongDowntoBottom(idx);
+                    return arrayMove(
+                      prev as PlaylistTrackObject[],
+                      idx,
+                      (prev as PlaylistTrackObject[]).length - 1
+                    );
+                  });
+                }}
+                onUptoTop={() => {
+                  setTracksItems((prev) => {
+                    if (!prev) return [];
+                    moveSongUptoTop(idx);
+                    return arrayMove(prev as PlaylistTrackObject[], idx, 0);
                   });
                 }}
               />
@@ -119,11 +144,15 @@ function TrackDisplayer({
   track,
   onup,
   ondown,
+  onUptoTop,
+  onDowntoBottom,
 }: {
   idx: number;
   track: Track;
   onup: () => void;
   ondown: () => void;
+  onUptoTop: () => void;
+  onDowntoBottom: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: idx + 1 });
@@ -167,6 +196,13 @@ function TrackDisplayer({
         <div className="flex flex-col sm:flex-row md:flex-row-reverse ml-2">
           <C.ArrowBtn onClick={onup} up />
           <C.ArrowBtn onClick={ondown} />
+          {process.env.NODE_ENV === "development" && (
+            <>
+              <C.FullArrowBtn onClick={onUptoTop} up />
+              <C.FullArrowBtn onClick={onDowntoBottom} />
+              <C.DeleteBtn onClick={() => null} />
+            </>
+          )}
         </div>
         {process.env.NODE_ENV === "development" && (
           <i
@@ -214,6 +250,26 @@ const C = {
           up ? "up" : "down"
         } md:text-2xl translate-y-0.5`}
       />
+    </button>
+  ),
+  FullArrowBtn: ({ up, onClick }: { up?: boolean; onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      className="flex-1 w-6 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 transition-colors"
+    >
+      <i
+        className={`fi fi-rr-angle-double-small-${
+          up ? "up" : "down"
+        } md:text-2xl translate-y-0.5`}
+      />
+    </button>
+  ),
+  DeleteBtn: ({ onClick }: { onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      className="flex-1 w-6 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 transition-colors"
+    >
+      <i className={`fi fi-rr-cross md:text-2xl translate-y-0.5`} />
     </button>
   ),
   Duration: ({ dur }: { dur: number }) => (

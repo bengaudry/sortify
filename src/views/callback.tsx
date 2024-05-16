@@ -1,5 +1,6 @@
 "use client";
 import { getAccessToken } from "@/api/spotify";
+import { Loader } from "@/components/Loader";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -32,8 +33,6 @@ export function CallbackPage() {
   useEffect(fetchUserData, []);
 
   return (
-    <div className="grid place-content-center w-full h-screen">
-      Linking to Spotify...
-    </div>
+    <Loader message="Linking to Spotify..." />
   );
 }

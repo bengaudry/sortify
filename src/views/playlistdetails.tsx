@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { fetchPlaylistDetails } from "@/api/spotify";
 import { DraggableTrackList } from "@/components/DraggableTrackList";
 import { checkTokenValidity, getToken } from "@/lib/token";
+import { Loader } from "@/components/Loader";
 
 export function PlaylistDetailsPage({ listid }: { listid: string }) {
   const r = useRouter();
@@ -43,6 +44,38 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
   const moveSongUp = moveSong(-1);
   const moveSongDown = moveSong(2);
 
+  const moveSongToTop = (songIdx: number) => {
+    checkTokenValidity({ withRedirect: true });
+    if (!tracksItems || !playlist) return;
+    fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${getToken() as string}`,
+      },
+      body: JSON.stringify({
+        range_start: songIdx,
+        insert_before: 0,
+        range_length: 1,
+      }),
+    });
+  };
+
+  const moveSongToBottom = (songIdx: number) => {
+    checkTokenValidity({ withRedirect: true });
+    if (!tracksItems || !playlist) return;
+    fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${getToken() as string}`,
+      },
+      body: JSON.stringify({
+        range_start: songIdx,
+        insert_before: tracksItems.length,
+        range_length: 1,
+      }),
+    });
+  };
+
   useEffect(() => {
     if (!header.current) return;
     const obs = new IntersectionObserver(
@@ -56,7 +89,7 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
     return () => obs.disconnect();
   }, []);
 
-  return (
+  return playlist ? (
     <div>
       <div
         className={`lg:hidden pl-4 py-12 bg-gradient-to-b from-[${playlist?.primary_color}] to-black`}
@@ -137,6 +170,8 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
           setTracksItems={setTracksItems}
           moveSongDown={moveSongDown}
           moveSongUp={moveSongUp}
+          moveSongDowntoBottom={moveSongToBottom}
+          moveSongUptoTop={moveSongToTop}
         />
       </div>
 
@@ -190,9 +225,13 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
             setTracksItems={setTracksItems}
             moveSongDown={moveSongDown}
             moveSongUp={moveSongUp}
+            moveSongUptoTop={moveSongToTop}
+            moveSongDowntoBottom={moveSongToBottom}
           />
         </div>
       </div>
     </div>
+  ) : (
+    <Loader message="Fetching playlist details..." />
   );
 }

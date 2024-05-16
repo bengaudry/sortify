@@ -1,6 +1,7 @@
 "use client";
 import { fetchProfile, fetchUsersPlaylists } from "@/api/spotify";
 import { CtaLink } from "@/components/cta";
+import { Loader } from "@/components/Loader";
 import { checkTokenValidity, getToken } from "@/lib/token";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -152,8 +153,6 @@ export function PlaylistsPage() {
       </main>
     </>
   ) : (
-    <div className="w-full h-screen grid place-content-center">
-      Loading your playlists
-    </div>
+    <Loader message="Fetching your playlists..." />
   );
 }
