@@ -65,7 +65,7 @@ export function DraggableTrackList({
             const originalPos = active.id as number;
             const newPos = over.id as number;
 
-            console.log("active, over: ", active.id, over.id)
+            console.log("active, over: ", active.id, over.id);
 
             return arrayMove(
               items as PlaylistTrackObject[],
@@ -128,7 +128,7 @@ function TrackDisplayer({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: idx + 1 });
 
-  const { album, explicit, artists, duration_ms, name } = track;
+  const { album, explicit, artists, duration_ms, name, external_urls } = track;
 
   const style = {
     transition,
@@ -151,8 +151,11 @@ function TrackDisplayer({
           <C.ArrowBtn onClick={onup} up />
           <C.ArrowBtn onClick={ondown} />
         </div>
-        <C.Cover url={album.images[0].url} />
-        <div className="flex flex-col">
+        <C.Cover
+          imgurl={album.images[0].url}
+          spotifyurl={external_urls.spotify}
+        />
+        <div className="ml-2 flex flex-col">
           <span className="font-medium">{name}</span>
           <span className="text-spotify-200 text-sm">
             {explicit && <C.ExplicitContent />}
@@ -181,13 +184,18 @@ const C = {
       E
     </span>
   ),
-  Cover: ({ url }: { url: string }) => (
-    <img
-      src={url}
-      className="h-12 aspect-square rounded-sm mr-2 bg-neutral-600"
-      width={48}
-      height={48}
-    />
+  Cover: ({ imgurl, spotifyurl }: { imgurl: string; spotifyurl: string }) => (
+    <a className="relative w-fit block" target="_blank" href={spotifyurl}>
+      <div className="absolute w-full h-full grid place-content-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity">
+        <img src="/Spotify_Icon_RGB_White.png" width={22} height={22} />
+      </div>
+      <img
+        src={imgurl}
+        className="h-12 aspect-square rounded-sm bg-neutral-600"
+        width={48}
+        height={48}
+      />
+    </a>
   ),
   ArrowBtn: ({ up, onClick }: { up?: boolean; onClick: () => void }) => (
     <button
