@@ -31,7 +31,7 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9717273868571983"
           crossOrigin="anonymous"
         />
-        <link href="/images/icon-rounded.svg" rel="icon" />
+        <link href="/image/icon-rounded.svg" rel="icon" />
       </Head>
       <body>
         <Analytics />
