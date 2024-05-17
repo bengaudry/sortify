@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import "@flaticon/flaticon-uicons/css/regular/rounded.css";
+import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "Sortify",
@@ -17,13 +18,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
+      <Head>
         <meta
           name="google-site-verification"
           content="qahsQX4WivRzCsj09PgkH6eyxiPYZeruTfqmHj2kSBM"
         />
-        <meta name="google-adsense-account" content="ca-pub-9717273868571983"></meta>
-      </head>
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-9717273868571983"
+        />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9717273868571983"
+          crossOrigin="anonymous"
+        />
+      </Head>
       <body>
         <Analytics />
         <SpeedInsights />
