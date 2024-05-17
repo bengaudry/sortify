@@ -39,7 +39,7 @@ export function WelcomePage() {
       </ToastContainer>
       <main className="flex flex-col justify-between h-screen w-full bg-gradient-to-b from-spotify-800 to-spotify-900">
         <header className="flex flex-row p-4 gap-2">
-          <img src="/icon-rounded.svg" width={28} height={28} />
+          <img src="/images/icon-rounded.svg" width={28} height={28} />
           <h3 className="text-lg text-spotify-100/80">Sortify</h3>
         </header>
 

@@ -22,7 +22,7 @@ export function LegalPage() {
         }
       >
         <a className="flex items-center gap-2" href="/">
-          <img src="/icon-rounded.svg" width={30} height={30} />
+          <img src="/images/icon-rounded.svg" width={30} height={30} />
           <span className="text-spotify-200 font-medium text-xl">Sortify</span>
         </a>
         <div className="w-fit relative flex items-center">
