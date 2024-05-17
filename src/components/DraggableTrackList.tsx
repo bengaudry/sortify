@@ -8,6 +8,7 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -17,7 +18,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, MouseEventHandler, SetStateAction, useState } from "react";
 
 const formatMsDuration = (duration_ms: number): string => {
   let seconds = Math.floor(duration_ms / 1000);
@@ -29,17 +30,11 @@ const formatMsDuration = (duration_ms: number): string => {
 export function DraggableTrackList({
   tracksItems,
   setTracksItems,
-  moveSongUp,
-  moveSongDown,
-  moveSongUptoTop,
-  moveSongDowntoBottom,
+  moveSong,
 }: {
   tracksItems: PlaylistTrackObject[] | undefined;
   setTracksItems: Dispatch<SetStateAction<PlaylistTrackObject[] | undefined>>;
-  moveSongUp: (songIdx: number) => void;
-  moveSongDown: (songIdx: number) => void;
-  moveSongUptoTop: (songIdx: number) => void;
-  moveSongDowntoBottom: (songIdx: number) => void;
+  moveSong: (prevIdx: number, newIdx: number) => void;
 }) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -53,6 +48,50 @@ export function DraggableTrackList({
     }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
+  const moveSongUp = (startIdx: number) => {
+    if (startIdx <= 0) return;
+    moveSong(startIdx, startIdx - 1);
+  };
+
+  const moveSongDown = (startIdx: number) => {
+    if (!tracksItems || startIdx >= tracksItems.length - 1) return;
+    moveSong(startIdx, startIdx + 1);
+  };
+
+  const moveSongToTop = (startIdx: number) => {
+    if (!tracksItems || startIdx <= 0) return;
+    moveSong(startIdx, 0);
+  };
+
+  const moveSongToBottom = (startIdx: number) => {
+    if (!tracksItems || startIdx >= tracksItems.length - 1) return;
+    moveSong(startIdx, tracksItems.length);
+  };
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    console.log("dragend", e);
+    const { active, over } = e;
+    if (!over || !tracksItems || active.id === over.id) return;
+
+    setTracksItems((items) => {
+      const originalPos = (active.id as number) - 1;
+      const it = items as PlaylistTrackObject[];
+      const newPos =
+        over.id === it.length ? it.length - 1 : (over.id as number) - 1;
+      moveSong(originalPos, newPos);
+
+      return arrayMove(items as PlaylistTrackObject[], originalPos, newPos);
+    });
+  };
+
+  const [toolsShown, setToolsShown] = useState(false);
+  const [toolBoxTarget, setToolboxTarget] = useState(0);
+  const [toolBoxLocation, setToolboxLocation] = useState({ x: 0, y: 0 });
+
+  const useToolbox = (fn: () => void) => {
+    setToolsShown(false);
+    fn();
+  };
 
   return (
     tracksItems && (
@@ -60,25 +99,38 @@ export function DraggableTrackList({
         autoScroll
         collisionDetection={closestCorners}
         sensors={sensors}
-        onDragEnd={(e) => {
-          console.log("dragend", e);
-          const { active, over } = e;
-          if (!over || !tracksItems || active.id === over.id) return;
-
-          setTracksItems((items) => {
-            const originalPos = active.id as number;
-            const newPos = over.id as number;
-
-            console.log("active, over: ", active.id, over.id);
-
-            return arrayMove(
-              items as PlaylistTrackObject[],
-              originalPos - 1,
-              newPos - 1
-            );
-          });
-        }}
+        onDragEnd={handleDragEnd}
       >
+        {toolsShown && (
+          <button
+            className="fixed inset-0 z-30 w-screen h-screen"
+            onClick={() => setToolsShown(false)}
+          />
+        )}
+        <div
+          className={`absolute z-40 px-4 bg-spotify-700 shadow-lg shadow-spotify-900/60 rounded-full flex items-center ${
+            toolsShown ? "scale-100 opacity-1" : "scale-75 opacity-0"
+          } origin-top-right transition-all duration-150`}
+          style={{ top: toolBoxLocation.y, left: toolBoxLocation.x }}
+        >
+          <C.ArrowBtn
+            onClick={() => useToolbox(() => moveSongUp(toolBoxTarget))}
+            up
+          />
+          <C.ArrowBtn
+            onClick={() => useToolbox(() => moveSongDown(toolBoxTarget))}
+          />
+          <C.FullArrowBtn
+            onClick={() => useToolbox(() => moveSongToTop(toolBoxTarget))}
+            up
+          />
+          <C.FullArrowBtn
+            onClick={() => useToolbox(() => moveSongToBottom(toolBoxTarget))}
+          />
+          {process.env.NODE_ENV === "development" && (
+            <C.DeleteBtn onClick={() => null} />
+          )}
+        </div>
         <div className="flex flex-col pb-8 w-full">
           <SortableContext
             items={tracksItems.map((_, index) => index)}
@@ -89,41 +141,12 @@ export function DraggableTrackList({
                 idx={idx}
                 key={idx}
                 track={track.track}
-                onup={() => {
-                  setTracksItems((prev) => {
-                    moveSongUp(idx);
-                    return arrayMove(
-                      prev as PlaylistTrackObject[],
-                      idx,
-                      idx - 1
-                    );
-                  });
-                }}
-                ondown={() => {
-                  setTracksItems((prev) => {
-                    moveSongUp(idx);
-                    return arrayMove(
-                      prev as PlaylistTrackObject[],
-                      idx,
-                      idx + 1
-                    );
-                  });
-                }}
-                onDowntoBottom={() => {
-                  setTracksItems((prev) => {
-                    moveSongDowntoBottom(idx);
-                    return arrayMove(
-                      prev as PlaylistTrackObject[],
-                      idx,
-                      (prev as PlaylistTrackObject[]).length - 1
-                    );
-                  });
-                }}
-                onUptoTop={() => {
-                  setTracksItems((prev) => {
-                    if (!prev) return [];
-                    moveSongUptoTop(idx);
-                    return arrayMove(prev as PlaylistTrackObject[], idx, 0);
+                onToolboxToggle={(e) => {
+                  setToolsShown((t) => !t);
+                  setToolboxTarget(idx);
+                  setToolboxLocation({
+                    x: e.clientX - 4 * e.currentTarget.clientWidth,
+                    y: e.clientY + 5,
                   });
                 }}
               />
@@ -142,17 +165,11 @@ export function DraggableTrackList({
 function TrackDisplayer({
   idx,
   track,
-  onup,
-  ondown,
-  onUptoTop,
-  onDowntoBottom,
+  onToolboxToggle,
 }: {
   idx: number;
   track: Track;
-  onup: () => void;
-  ondown: () => void;
-  onUptoTop: () => void;
-  onDowntoBottom: () => void;
+  onToolboxToggle: MouseEventHandler<HTMLButtonElement>;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: idx + 1 });
@@ -191,18 +208,15 @@ function TrackDisplayer({
           </span>
         </div>
       </div>
-      <div className="flex items-center justify-end">
+      <div className="relative flex items-center justify-end">
         <C.Duration dur={duration_ms} />
-        <div className="flex flex-col sm:flex-row md:flex-row-reverse ml-2">
-          <C.ArrowBtn onClick={onup} up />
-          <C.ArrowBtn onClick={ondown} />
-          {process.env.NODE_ENV === "development" && (
-            <>
-              <C.FullArrowBtn onClick={onUptoTop} up />
-              <C.FullArrowBtn onClick={onDowntoBottom} />
-              <C.DeleteBtn onClick={() => null} />
-            </>
-          )}
+        <div className="h-full flex flex-col sm:flex-row md:flex-row-reverse">
+          <button
+            className="h-full w-10 flex items-center justify-center"
+            onClick={onToolboxToggle}
+          >
+            <i className="fi fi-rr-menu-dots-vertical translate-y-0.5" />
+          </button>
         </div>
         {process.env.NODE_ENV === "development" && (
           <i
@@ -243,33 +257,33 @@ const C = {
   ArrowBtn: ({ up, onClick }: { up?: boolean; onClick: () => void }) => (
     <button
       onClick={onClick}
-      className="flex-1 w-6 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 transition-colors"
+      className="flex-1 w-8 text-lg text-spotify-100/50 hover:text-spotify-100 h-full px-2 pt-2 pb-1 hover:scale-125 origin-bottom transition-all"
     >
       <i
         className={`fi fi-rr-arrow-alt-square-${
           up ? "up" : "down"
-        } md:text-2xl translate-y-0.5`}
+        } text-center translate-y-0.5`}
       />
     </button>
   ),
   FullArrowBtn: ({ up, onClick }: { up?: boolean; onClick: () => void }) => (
     <button
       onClick={onClick}
-      className="flex-1 w-6 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 transition-colors"
+      className="flex-1 w-8 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 h-full px-2 pt-2 pb-1 hover:scale-125 origin-bottom transition-all"
     >
       <i
         className={`fi fi-rr-angle-double-small-${
           up ? "up" : "down"
-        } md:text-2xl translate-y-0.5`}
+        } text-2xl text-center translate-y-0.5`}
       />
     </button>
   ),
   DeleteBtn: ({ onClick }: { onClick: () => void }) => (
     <button
       onClick={onClick}
-      className="flex-1 w-6 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 transition-colors"
+      className="flex-1 w-8 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 h-full px-2 pt-2 pb-1 hover:scale-125 origin-bottom transition-all"
     >
-      <i className={`fi fi-rr-cross md:text-2xl translate-y-0.5`} />
+      <i className={`fi fi-rr-cross translate-y-0.5 text-center`} />
     </button>
   ),
   Duration: ({ dur }: { dur: number }) => (

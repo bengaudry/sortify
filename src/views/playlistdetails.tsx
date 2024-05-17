@@ -6,6 +6,7 @@ import { fetchPlaylistDetails } from "@/api/spotify";
 import { DraggableTrackList } from "@/components/DraggableTrackList";
 import { checkTokenValidity, getToken } from "@/lib/token";
 import { Loader } from "@/components/Loader";
+import { arrayMove } from "@dnd-kit/sortable";
 
 export function PlaylistDetailsPage({ listid }: { listid: string }) {
   const r = useRouter();
@@ -25,55 +26,28 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
 
   useEffect(() => {}, [tracksItems]);
 
-  const moveSong = (offset: number) => (songIdx: number) => {
+  const moveSong = (prevSongIdx: number, newSongIdx: number) => {
     checkTokenValidity({ withRedirect: true });
     if (!tracksItems || !playlist) return;
+    setTracksItems((prevItems) => {
+      return arrayMove(
+        prevItems as PlaylistTrackObject[],
+        prevSongIdx,
+        newSongIdx
+      );
+    });
+    console.log("moving song", prevSongIdx+1, "to position", newSongIdx+1)
     fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${getToken() as string}`,
       },
       body: JSON.stringify({
-        range_start: songIdx,
-        insert_before: songIdx + offset,
+        range_start: prevSongIdx,
+        insert_before: newSongIdx,
         range_length: 1,
       }),
-    });
-  };
-
-  const moveSongUp = moveSong(-1);
-  const moveSongDown = moveSong(2);
-
-  const moveSongToTop = (songIdx: number) => {
-    checkTokenValidity({ withRedirect: true });
-    if (!tracksItems || !playlist) return;
-    fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${getToken() as string}`,
-      },
-      body: JSON.stringify({
-        range_start: songIdx,
-        insert_before: 0,
-        range_length: 1,
-      }),
-    });
-  };
-
-  const moveSongToBottom = (songIdx: number) => {
-    checkTokenValidity({ withRedirect: true });
-    if (!tracksItems || !playlist) return;
-    fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${getToken() as string}`,
-      },
-      body: JSON.stringify({
-        range_start: songIdx,
-        insert_before: tracksItems.length,
-        range_length: 1,
-      }),
-    });
+    }).then(() => { console.info("song moved successfully")}).catch(err => console.error(err)) 
   };
 
   useEffect(() => {
@@ -168,10 +142,7 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
         <DraggableTrackList
           tracksItems={tracksItems}
           setTracksItems={setTracksItems}
-          moveSongDown={moveSongDown}
-          moveSongUp={moveSongUp}
-          moveSongDowntoBottom={moveSongToBottom}
-          moveSongUptoTop={moveSongToTop}
+          moveSong={moveSong}
         />
       </div>
 
@@ -223,10 +194,7 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
           <DraggableTrackList
             tracksItems={tracksItems}
             setTracksItems={setTracksItems}
-            moveSongDown={moveSongDown}
-            moveSongUp={moveSongUp}
-            moveSongUptoTop={moveSongToTop}
-            moveSongDowntoBottom={moveSongToBottom}
+            moveSong={moveSong}
           />
         </div>
       </div>
