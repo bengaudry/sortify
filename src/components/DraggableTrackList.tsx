@@ -110,7 +110,7 @@ export function DraggableTrackList({
         <div
           className={`absolute z-40 px-4 bg-spotify-700 shadow-lg shadow-spotify-900/60 rounded-full flex items-center ${
             toolsShown ? "scale-100 opacity-1" : "scale-75 opacity-0"
-          } origin-top-right transition-all duration-150`}
+          } origin-top-right transition-[opacity,transform] duration-150`}
           style={{ top: toolBoxLocation.y, left: toolBoxLocation.x }}
         >
           <C.ArrowBtn
@@ -215,7 +215,7 @@ function TrackDisplayer({
             className="h-full w-10 flex items-center justify-center"
             onClick={onToolboxToggle}
           >
-            <i className="fi fi-rr-menu-dots-vertical translate-y-0.5" />
+            <i className="fi fi-rr-menu-dots-vertical translate-y-0.5 text-spotify-200" />
           </button>
         </div>
         {process.env.NODE_ENV === "development" && (
@@ -257,6 +257,7 @@ const C = {
   ArrowBtn: ({ up, onClick }: { up?: boolean; onClick: () => void }) => (
     <button
       onClick={onClick}
+      title={`Move song ${up ? "up" : "down"}`}
       className="flex-1 w-8 text-lg text-spotify-100/50 hover:text-spotify-100 h-full px-2 pt-2 pb-1 hover:scale-125 origin-bottom transition-all"
     >
       <i
@@ -269,6 +270,7 @@ const C = {
   FullArrowBtn: ({ up, onClick }: { up?: boolean; onClick: () => void }) => (
     <button
       onClick={onClick}
+      title={`Move song to ${up ? "top" : "bottom"}`}
       className="flex-1 w-8 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 h-full px-2 pt-2 pb-1 hover:scale-125 origin-bottom transition-all"
     >
       <i
@@ -281,6 +283,7 @@ const C = {
   DeleteBtn: ({ onClick }: { onClick: () => void }) => (
     <button
       onClick={onClick}
+      title="Remove from playlist"
       className="flex-1 w-8 md:w-8 text-lg text-spotify-100/50 hover:text-spotify-100 h-full px-2 pt-2 pb-1 hover:scale-125 origin-bottom transition-all"
     >
       <i className={`fi fi-rr-cross translate-y-0.5 text-center`} />

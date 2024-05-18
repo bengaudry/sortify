@@ -7,6 +7,7 @@ import { DraggableTrackList } from "@/components/DraggableTrackList";
 import { checkTokenValidity, getToken } from "@/lib/token";
 import { Loader } from "@/components/Loader";
 import { arrayMove } from "@dnd-kit/sortable";
+import { BackButton } from "@/components/BackButton";
 
 export function PlaylistDetailsPage({ listid }: { listid: string }) {
   const r = useRouter();
@@ -36,7 +37,7 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
         newSongIdx
       );
     });
-    console.log("moving song", prevSongIdx+1, "to position", newSongIdx+1)
+    console.log("moving song", prevSongIdx + 1, "to position", newSongIdx + 1);
     fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
       method: "PUT",
       headers: {
@@ -47,7 +48,11 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
         insert_before: newSongIdx,
         range_length: 1,
       }),
-    }).then(() => { console.info("song moved successfully")}).catch(err => console.error(err)) 
+    })
+      .then(() => {
+        console.info("song moved successfully");
+      })
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
@@ -69,9 +74,7 @@ export function PlaylistDetailsPage({ listid }: { listid: string }) {
         className={`lg:hidden pl-4 py-12 bg-gradient-to-b from-[${playlist?.primary_color}] to-black`}
       >
         <header ref={header}>
-          <a href="/playlists" className="block text-spotify-200 mb-4">
-            &lt; Back
-          </a>
+          <BackButton to="/playlists" />
           <div className="pl-2 mb-6 flex flex-row gap-4 items-center">
             <img
               src={playlist?.images[0].url}
