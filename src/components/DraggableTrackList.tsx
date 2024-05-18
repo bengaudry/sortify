@@ -74,10 +74,10 @@ export function DraggableTrackList({
     if (!over || !tracksItems || active.id === over.id) return;
 
     setTracksItems((items) => {
-      const originalPos = (active.id as number) - 1;
+      const originalPos = parseInt(active.id as string) - 1;
       const it = items as PlaylistTrackObject[];
       const newPos =
-        over.id === it.length ? it.length - 1 : (over.id as number) - 1;
+        over.id === it.length ? it.length - 1 : parseInt(over.id as string) - 1;
       moveSong(originalPos, newPos);
 
       return arrayMove(items as PlaylistTrackObject[], originalPos, newPos);
@@ -133,7 +133,7 @@ export function DraggableTrackList({
         </div>
         <div className="flex flex-col pb-8 w-full">
           <SortableContext
-            items={tracksItems.map((_, index) => index)}
+            items={tracksItems.map((_, index) => `${index}`)}
             strategy={verticalListSortingStrategy}
           >
             {tracksItems.map((track, idx) => (
@@ -172,7 +172,7 @@ function TrackDisplayer({
   onToolboxToggle: MouseEventHandler<HTMLButtonElement>;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: idx + 1 });
+    useSortable({ id: `${idx + 1}` });
 
   const { album, explicit, artists, duration_ms, name, external_urls } = track;
 

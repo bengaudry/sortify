@@ -1,6 +1,7 @@
 "use client";
 import { fetchProfile, fetchUsersPlaylists } from "@/api/spotify";
 import { CtaLink } from "@/components/cta";
+import { Footer } from "@/components/Footer";
 import { Loader } from "@/components/Loader";
 import { checkTokenValidity, getToken } from "@/lib/token";
 import { useRouter } from "next/navigation";
@@ -31,20 +32,20 @@ export function PlaylistsPage() {
   }, []);
 
   const fetchUserData = () => {
-    checkTokenValidity({ withRedirect: true });
+    console.log(checkTokenValidity({ withRedirect: true }));
     const token = getToken() as string;
     fetchProfile(token)
       .then((p) => {
+        if (!p) push("/?error=token_expired");
+        console.log("profile", p);
         setProfile(p);
         setPlaylists([]);
         fetchUsersPlaylists(token)
           .then((lists) => lists.json())
           .then(({ items }: { items: Array<Playlist> }) => setPlaylists(items))
-          .catch((err) =>
-            console.error("Error while fetching users playlists :", err)
-          );
+          .catch(() => push(`/?err=token_expired`));
       })
-      .catch((err) => console.error("Error while fetching profile :", err));
+      .catch(() => push(`/?error=token_expired`));
   };
 
   useEffect(() => {
@@ -69,19 +70,13 @@ export function PlaylistsPage() {
               <p className="text-3xl sm:text-5xl font-bold">
                 {profile?.display_name}
               </p>
-              <p className="text-sm sm:text-base text-spotify-200">
-                {profile?.followers.total} followers
-              </p>
               <button
                 className="flex items-center gap-2 w-fit bg-neutral-700 hover:bg-red-600 px-4 py-1 mt-2 rounded-full text-sm font-medium text-spotify-100"
                 onClick={() => {
                   push("/signout");
                 }}
               >
-                <span>
-
-                Sign out
-                </span>
+                <span>Sign out</span>
                 <i className="fi fi-rr-exit translate-y-0.5" />
               </button>
             </div>
@@ -151,6 +146,7 @@ export function PlaylistsPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   ) : (
     <Loader message="Fetching your playlists..." />

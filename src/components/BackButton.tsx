@@ -7,7 +7,7 @@ export function BackButton({ to }: { to: string }) {
   return (
     <a
       href={to}
-      className="flex gap-2 text-spotify-200 hover:text-spotify-100 transition-colors mb-4"
+      className="flex w-fit py-2 px-4 -mx-4 -my-2 gap-2 text-spotify-200 hover:text-spotify-100 transition-colors mb-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
