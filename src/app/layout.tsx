@@ -23,16 +23,14 @@ export default function RootLayout({
           name="google-site-verification"
           content="qahsQX4WivRzCsj09PgkH6eyxiPYZeruTfqmHj2kSBM"
         />
-        <meta
-          name="google-adsense-account"
-          content="ca-pub-9717273868571983"
-        />
+        <meta name="google-adsense-account" content="ca-pub-9717273868571983" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9717273868571983"
           crossOrigin="anonymous"
         />
         <link href="/image/icon-rounded.svg" rel="icon" />
+        <link href="/image/icon-rounded.png" rel="icon" />
       </Head>
       <body>
         <Analytics />
