@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import "@flaticon/flaticon-uicons/css/regular/rounded.css";
+import "pure-react-carousel/dist/react-carousel.es.css";
 import Head from "next/head";
 
 export const metadata: Metadata = {

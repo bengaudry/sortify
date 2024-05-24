@@ -12,7 +12,7 @@ type ToastContainerProps = {
 
 export function ToastContainer(props: ToastContainerProps) {
   return (
-    <div className="fixed top-4 right-4 flex flex-col gap-4 w-80">
+    <div className="fixed top-4 right-4 flex flex-col gap-4 w-80 z-50">
       {props.children}
     </div>
   );
@@ -28,16 +28,16 @@ export function Toast(props: ToastProps) {
 
     switch (type) {
       case "success":
-        color += "bg-green-500/50 text-green-100";
+        color += "bg-green-500 text-green-100";
         break;
       case "error":
-        color += "bg-red-500/50 text-green-100";
+        color += "bg-red-500 text-green-100";
         break;
       case "warning":
-        color += "bg-yellow-500/50 text-green-100";
+        color += "bg-yellow-500 text-green-100";
         break;
       default:
-        color += "bg-blue-500/50 text-green-100";
+        color += "bg-blue-500 text-green-100";
         break;
     }
     return `w-full px-4 py-2 rounded-lg flex flex-col items-start justify-center ${color}`;
